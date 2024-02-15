@@ -1,18 +1,70 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:teste/components/my_button.dart';
 import 'package:teste/components/my_text_field.dart';
 import 'package:teste/components/squre_tile.dart';
 
-class LoginPage extends StatelessWidget {
-  LoginPage({super.key});
-   
+class LoginPage extends StatefulWidget {
+
+  const LoginPage({super.key});
+
+  @override
+  State<LoginPage> createState() => _LoginPageState();
+}
+
+class _LoginPageState extends State<LoginPage> {
   // text editing controllers
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
 
+  void invalidCredentialMessage() {
+    showDialog(
+        context: context, 
+        builder: (context) {
+          return const Center(
+            child: AlertDialog(
+              title: Text('Erro: Credenciais inválidas'),
+            ),
+          );
+        }
+      );
+  }
+
+   void genericErrorMessage(String code) {
+    showDialog(
+        context: context, 
+        builder: (context) {
+          return  Center(
+            child: AlertDialog(
+              title: Text(code),
+            ),
+          );
+        }
+      );
+    }
+
   // signIn method
-  void signIn() {
-    
+  void signIn() async {
+    showDialog(
+      context: context, 
+      builder: (context) {
+        return const Center(
+          child: CircularProgressIndicator(),
+        );
+      }
+    );
+    try {
+      await FirebaseAuth.instance.signInWithEmailAndPassword(email: emailController.text, password: passwordController.text);
+      if (!mounted) return;
+      Navigator.pop(context);
+    } on FirebaseAuthException catch (e) {
+        Navigator.pop(context);
+        if (e.code == 'invalid-credential') {
+          invalidCredentialMessage();
+        } else {
+          genericErrorMessage(e.code);
+        }
+      }   
   }
 
   @override
@@ -32,7 +84,6 @@ class LoginPage extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                     const SizedBox(height:50),
-                    
                     // logo e texto
                      const Text(
                       'Bem-vindo!',
@@ -53,8 +104,12 @@ class LoginPage extends StatelessWidget {
                     
                     const SizedBox(height:50),        
                        
-                    // username texfield
-                    MyTextField(controller: emailController, hintText: "email", obscureText: false),
+                    // email texfield 
+                    MyTextField(
+                      controller: emailController, 
+                      hintText: "email", 
+                      obscureText: false,
+                    ),
                       
                     const SizedBox(height:17),  
                       

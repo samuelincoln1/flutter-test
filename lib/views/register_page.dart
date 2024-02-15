@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:teste/components/my_button.dart';
 import 'package:teste/components/my_text_field.dart';
@@ -12,10 +13,65 @@ class RegisterPage extends StatefulWidget {
 }
 
 class _RegisterPageState extends State<RegisterPage> {
+
+
   
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
   final nomeController = TextEditingController();
+
+   void invalidCredentialMessage() {
+    showDialog(
+        context: context, 
+        builder: (context) {
+          return const Center(
+            child: AlertDialog(
+              title: Text('Erro: Credenciais inválidas'),
+            ),
+          );
+        }
+      );
+  }
+
+   void genericErrorMessage(String code) {
+    showDialog(
+        context: context, 
+        builder: (context) {
+          return  Center(
+            child: AlertDialog(
+              title: Text(code),
+            ),
+          );
+        }
+      );
+    }
+
+  // signIn method
+  void signUp() async {
+    showDialog(
+      context: context, 
+      builder: (context) {
+        return const Center(
+          child: CircularProgressIndicator(),
+        );
+      }
+    );
+    try {
+      await FirebaseAuth.instance.createUserWithEmailAndPassword(email: emailController.text, password: passwordController.text);
+      final user = FirebaseAuth.instance.currentUser;
+      user?.updateDisplayName(nomeController.text);
+      if (!mounted) return;
+      Navigator.pop(context);
+    } on FirebaseAuthException catch (e) {
+        Navigator.pop(context);
+        if (e.code == 'invalid-credential') {
+          invalidCredentialMessage();
+        } else {
+          genericErrorMessage(e.code);
+        }
+      }   
+  }
+  
 
   @override
   Widget build(BuildContext context) {
@@ -55,7 +111,7 @@ class _RegisterPageState extends State<RegisterPage> {
                     
                     const SizedBox(height:20),        
 
-                    MyTextField(controller: nomeController, hintText: "Nome completo", obscureText: false),
+                    MyTextField(controller: nomeController, hintText: "nome completo", obscureText: false),
                     const SizedBox(height:17),  
                     // username texfield
                     MyTextField(controller: emailController, hintText: "email", obscureText: false),
@@ -69,7 +125,7 @@ class _RegisterPageState extends State<RegisterPage> {
                          
                     // register button
                     MyButton( 
-                      onTap: (){},
+                      onTap: signUp,
                       text: 'Criar conta',
                     ),
                       
