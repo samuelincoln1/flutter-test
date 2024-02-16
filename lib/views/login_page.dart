@@ -17,26 +17,21 @@ class _LoginPageState extends State<LoginPage> {
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
 
-  void invalidCredentialMessage() {
-    showDialog(
-        context: context, 
-        builder: (context) {
-          return const Center(
-            child: AlertDialog(
-              title: Text('Erro: Credenciais inválidas'),
-            ),
-          );
-        }
-      );
-  }
-
-   void genericErrorMessage(String code) {
+   void errorDialog(String code) {
+    late String errorMsg;
+    if (code == 'invalid-credential') {
+      errorMsg = 'Credenciais inválidas';
+    } else if (code == 'invalid-email') {
+      errorMsg = 'Insira um endereço de email válido';
+    } else {
+      errorMsg = 'Erro ao tentar fazer login';
+    }
     showDialog(
         context: context, 
         builder: (context) {
           return  Center(
             child: AlertDialog(
-              title: Text(code),
+              title: Text(errorMsg),
             ),
           );
         }
@@ -55,15 +50,14 @@ class _LoginPageState extends State<LoginPage> {
     );
     try {
       await FirebaseAuth.instance.signInWithEmailAndPassword(email: emailController.text, password: passwordController.text);
+      
       if (!mounted) return;
       Navigator.pop(context);
+      Navigator.of(context).pushNamed('/auth-page/');
+      
     } on FirebaseAuthException catch (e) {
         Navigator.pop(context);
-        if (e.code == 'invalid-credential') {
-          invalidCredentialMessage();
-        } else {
-          genericErrorMessage(e.code);
-        }
+        errorDialog(e.code);
       }   
   }
 

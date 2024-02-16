@@ -20,32 +20,30 @@ class _RegisterPageState extends State<RegisterPage> {
   final passwordController = TextEditingController();
   final nomeController = TextEditingController();
 
-   void invalidCredentialMessage() {
-    showDialog(
-        context: context, 
-        builder: (context) {
-          return const Center(
-            child: AlertDialog(
-              title: Text('Erro: Credenciais inválidas'),
-            ),
-          );
-        }
-      );
-  }
+   
 
-   void genericErrorMessage(String code) {
+ void errorDialog(String code) {
+    late String errorMsg;
+    if (code == 'email-already-in-use') {
+      errorMsg = 'Este email já foi cadastrado!';
+    } else if (code == 'invalid-email') {
+      errorMsg = 'Insira um endereço de email válido';
+    } else if (code == 'weak-password'){
+      errorMsg = 'Sua senha é muito fraca';
+    } else {
+      errorMsg = 'Erro ao criar conta';
+    }
     showDialog(
         context: context, 
         builder: (context) {
           return  Center(
             child: AlertDialog(
-              title: Text(code),
+              title: Text(errorMsg),
             ),
           );
         }
       );
     }
-
   // signIn method
   void signUp() async {
     showDialog(
@@ -64,11 +62,7 @@ class _RegisterPageState extends State<RegisterPage> {
       Navigator.pop(context);
     } on FirebaseAuthException catch (e) {
         Navigator.pop(context);
-        if (e.code == 'invalid-credential') {
-          invalidCredentialMessage();
-        } else {
-          genericErrorMessage(e.code);
-        }
+        errorDialog(e.code);
       }   
   }
   
