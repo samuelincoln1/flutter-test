@@ -13,11 +13,13 @@ class AuthPage extends StatelessWidget {
         stream: FirebaseAuth.instance.authStateChanges(), 
         builder: ((context, snapshot) {
           print(' --------- fui chamado ----------');
-          if (snapshot.hasData) {
-            return const HomePage();
-          } else {
+          
+          if (!snapshot.hasData || !snapshot.data!.emailVerified) {
             return const LoginPage();
           }
+
+          return const HomePage();
+         
         })
       ),
     );
