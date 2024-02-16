@@ -22,7 +22,7 @@ class _RegisterPageState extends State<RegisterPage> {
 
    
 
- void errorDialog(String code) {
+ void authErrorDialog(String code) {
     late String errorMsg;
     if (code == 'email-already-in-use') {
       errorMsg = 'Este email já foi cadastrado!';
@@ -30,20 +30,30 @@ class _RegisterPageState extends State<RegisterPage> {
       errorMsg = 'Insira um endereço de email válido';
     } else if (code == 'weak-password'){
       errorMsg = 'Sua senha é muito fraca';
+    } else if (code == 'channel-error') {
+      errorMsg = 'Os campos não podem estar vazios';
     } else {
-      errorMsg = 'Erro ao criar conta';
+      errorMsg = code;
     }
     showDialog(
-        context: context, 
-        builder: (context) {
-          return  Center(
-            child: AlertDialog(
-              title: Text(errorMsg),
-            ),
-          );
-        }
-      );
-    }
+      context: context, 
+      builder: (context) {
+        return  Center(
+          child: AlertDialog(
+            title: const Text('Erro de autenticação'),
+            content: Text(errorMsg),
+            elevation: 24.0,
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(context) ,
+                child: const Text('OK'),
+                )
+            ],
+          ),
+        );
+      }
+    );
+  }
   // signIn method
   void signUp() async {
     showDialog(
@@ -62,8 +72,10 @@ class _RegisterPageState extends State<RegisterPage> {
       Navigator.pop(context);
     } on FirebaseAuthException catch (e) {
         Navigator.pop(context);
-        errorDialog(e.code);
-      }   
+        authErrorDialog(e.code);
+    } catch (e) {
+      Navigator.pop(context);
+    }  
   }
   
 

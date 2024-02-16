@@ -17,25 +17,33 @@ class _LoginPageState extends State<LoginPage> {
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
 
-   void errorDialog(String code) {
+   void authErrorDialog(String code) {
     late String errorMsg;
     if (code == 'invalid-credential') {
       errorMsg = 'Credenciais inválidas';
     } else if (code == 'invalid-email') {
       errorMsg = 'Insira um endereço de email válido';
+    } else if (code == 'channel-error') {
+      errorMsg = 'Os campos não podem estar vazios';
     } else {
-      errorMsg = 'Erro ao tentar fazer login';
+      errorMsg = code;
     }
     showDialog(
-        context: context, 
-        builder: (context) {
-          return  Center(
-            child: AlertDialog(
-              title: Text(errorMsg),
-            ),
+      context: context, 
+      builder: (context) {
+        return AlertDialog(
+            title: const Text('Erro de autenticação'),
+            content: Text(errorMsg),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(context) ,
+                child: const Text('OK'),
+                )
+            ],
           );
-        }
-      );
+        
+      }
+    );
     }
 
   // signIn method
@@ -57,8 +65,10 @@ class _LoginPageState extends State<LoginPage> {
       
     } on FirebaseAuthException catch (e) {
         Navigator.pop(context);
-        errorDialog(e.code);
-      }   
+        authErrorDialog(e.code);
+    } catch (e) {
+       Navigator.pop(context);
+    }  
   }
 
   @override
