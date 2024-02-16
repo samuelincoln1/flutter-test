@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:teste/components/dialogs/error_dialogs.dart';
 import 'package:teste/components/my_button.dart';
 import 'package:teste/components/my_text_field.dart';
 import 'package:teste/components/squre_tile.dart';
@@ -16,36 +17,6 @@ class _RegisterPageState extends State<RegisterPage> {
   final passwordController = TextEditingController();
   final nomeController = TextEditingController();
 
-  void authErrorDialog(String code) {
-    String errorMsg = code;
-    if (code == 'email-already-in-use') {
-      errorMsg = 'Este email já foi cadastrado!';
-    } else if (code == 'invalid-email') {
-      errorMsg = 'Insira um endereço de email válido';
-    } else if (code == 'weak-password') {
-      errorMsg = 'Sua senha é muito fraca';
-    } else if (code == 'channel-error') {
-      errorMsg = 'Os campos não podem estar vazios';
-    }
-    showDialog(
-        context: context,
-        builder: (context) {
-          return Center(
-            child: AlertDialog(
-              title: const Text('Erro no cadastro'),
-              content: Text(errorMsg),
-              actions: [
-                TextButton(
-                  onPressed: () => Navigator.pop(context),
-                  child: const Text('OK'),
-                )
-              ],
-            ),
-          );
-        }
-      );
-  }
-
   // signIn method
   void signUp() async {
     showDialog(
@@ -59,39 +30,43 @@ class _RegisterPageState extends State<RegisterPage> {
       await FirebaseAuth.instance.createUserWithEmailAndPassword(
           email: emailController.text, password: passwordController.text);
       final user = FirebaseAuth.instance.currentUser!;
-      user.updateDisplayName(nomeController.text);
+
+      if (nomeController.text.length > 1) {
+        await user.updateDisplayName(nomeController.text);
+      } else {
+        await user.updateDisplayName("anon");
+      }
+
+      print(user.displayName);
       user.sendEmailVerification();
       print('------- enviei email -------');
       if (!mounted) return;
-    
 
       showDialog(
-        context: context,
-        builder: (context) {
-          return Center(
-            child: AlertDialog(
-              title: const Text('Verifique sua conta'),
-              content: const Text('Enviamos um email para você verificar sua conta!'),
-              actions: [
-                TextButton(
-                  onPressed: () {
+          context: context,
+          builder: (context) {
+            return Center(
+              child: AlertDialog(
+                title: const Text('Verifique sua conta'),
+                content: const Text(
+                    'Enviamos um email para você verificar sua conta!'),
+                actions: [
+                  TextButton(
+                    onPressed: () {
                       print('------- trocando pag -------');
                       Navigator.of(context).pushNamed('/auth-page/');
-                  },
-                  child: const Text('OK'),
-                )
-              ],
-            ),
-          );
-        }
-      );
-
-     
+                    },
+                    child: const Text('OK'),
+                  )
+                ],
+              ),
+            );
+          });
     } on FirebaseAuthException catch (e) {
       Navigator.pop(context);
-      authErrorDialog(e.code);
+      authErrorDialog(context, e.code);
     } catch (e) {
-      Navigator.pop(context);
+      genericErrorDialog(context, e.toString());
     }
   }
 
@@ -130,7 +105,7 @@ class _RegisterPageState extends State<RegisterPage> {
 
                 MyTextField(
                     controller: nomeController,
-                    hintText: "nome completo",
+                    hintText: "nome de usuario",
                     obscureText: false),
                 const SizedBox(height: 17),
                 // username texfield

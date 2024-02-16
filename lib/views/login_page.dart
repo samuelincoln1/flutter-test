@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:teste/components/dialogs/error_dialogs.dart';
 import 'package:teste/components/my_button.dart';
 import 'package:teste/components/my_text_field.dart';
 import 'package:teste/components/squre_tile.dart';
@@ -16,49 +17,23 @@ class _LoginPageState extends State<LoginPage> {
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
 
-  void verifyEmail(User user) {
-    user.sendEmailVerification();
-    Navigator.pop(context);
-  }
-
-  void authErrorDialog(String code) {
-    String errorMsg = code;
-    if (code == 'invalid-credential') {
-      errorMsg = 'Credenciais inválidas';
-    } else if (code == 'invalid-email') {
-      errorMsg = 'Insira um endereço de email válido';
-    } else if (code == 'channel-error') {
-      errorMsg = 'Os campos não podem estar vazios';
-    }
-    showDialog(
-        context: context,
-        builder: (context) {
-          return AlertDialog(
-            title: const Text('Erro de autenticação'),
-            content: Text(errorMsg),
-            actions: [
-              TextButton(
-                onPressed: () => Navigator.pop(context),
-                child: const Text('OK'),
-              ),
-            ],
-          );
-        });
-  }
-
   void verifyEmailDialog(User user) {
     showDialog(
         context: context,
         builder: (context) {
           return AlertDialog(
             title: const Text('Verifique seu email'),
-            content: const Text('Caso não tenha recebido um email, solicite um novo no botão abaixo'),
-            actions: [  
+            content: const Text(
+                'Caso não tenha recebido um email, solicite um novo no botão abaixo'),
+            actions: [
               TextButton(
-                onPressed: () => verifyEmail(user),
+                onPressed: () {
+                  user.sendEmailVerification();
+                  Navigator.pop(context);
+                },
                 child: const Text('Reenviar email'),
               ),
-               TextButton(
+              TextButton(
                 onPressed: () => Navigator.pop(context),
                 child: const Text('Voltar'),
               ),
@@ -84,15 +59,16 @@ class _LoginPageState extends State<LoginPage> {
       Navigator.pop(context);
 
       if (user.emailVerified) {
-        Navigator.of(context).pushNamedAndRemoveUntil('/auth-page/', (_) => false );
+        Navigator.of(context)
+            .pushNamedAndRemoveUntil('/auth-page/', (_) => false);
       } else {
         verifyEmailDialog(user);
       }
     } on FirebaseAuthException catch (e) {
       Navigator.pop(context);
-      authErrorDialog(e.code);
+      authErrorDialog(context, e.code);
     } catch (e) {
-      Navigator.pop(context);
+      genericErrorDialog(context, e.toString());
     }
   }
 

@@ -4,18 +4,16 @@ import 'package:flutter/material.dart';
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
 
-
   @override
   State<HomePage> createState() => _HomePageState();
 }
 
 class _HomePageState extends State<HomePage> {
-
   void signOut() async {
     await FirebaseAuth.instance.signOut();
   }
 
-  final user = FirebaseAuth.instance.currentUser!; 
+  final user = FirebaseAuth.instance.currentUser!;
 
   @override
   Widget build(BuildContext context) {
@@ -35,6 +33,7 @@ class _HomePageState extends State<HomePage> {
           children: [
             Text('Logado como ${user.email}'),
             Text('Email verificado: ${user.emailVerified}'),
+            Text('Username: ${user.displayName}'),
           ],
         ),
       ),
