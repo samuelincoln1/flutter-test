@@ -75,148 +75,149 @@ class _LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        body: Container(
-      decoration: const BoxDecoration(
-        image: DecorationImage(
-            image: AssetImage('lib/images/fundo.png'), fit: BoxFit.cover),
-      ),
-      child: SafeArea(
-        child: Center(
-          child: SingleChildScrollView(
-            child: Column(
-              children: [
-                const SizedBox(height: 50),
-                // logo e texto
-                const Text(
-                  'Bem-vindo!',
-                  style: TextStyle(
-                    color: Colors.black,
-                    fontSize: 30,
+      body: Container(
+        decoration: const BoxDecoration(
+          image: DecorationImage(
+              image: AssetImage('lib/images/fundo.png'), fit: BoxFit.cover),
+        ),
+        child: SafeArea(
+          child: Center(
+            child: SingleChildScrollView(
+              child: Column(
+                children: [
+                  const SizedBox(height: 50),
+                  // logo e texto
+                  const Text(
+                    'Bem-vindo!',
+                    style: TextStyle(
+                      color: Colors.black,
+                      fontSize: 30,
+                    ),
                   ),
-                ),
 
-                const Text(
-                  'Insira suas credenciais para fazer login',
-                  style: TextStyle(
-                    color: Colors.black,
-                    fontSize: 15,
+                  const Text(
+                    'Insira suas credenciais para fazer login',
+                    style: TextStyle(
+                      color: Colors.black,
+                      fontSize: 15,
+                    ),
                   ),
-                ),
 
-                const SizedBox(height: 50),
+                  const SizedBox(height: 50),
 
-                // email texfield
-                MyTextField(
-                  controller: emailController,
-                  hintText: "email",
-                  obscureText: false,
-                ),
+                  // email texfield
+                  MyTextField(
+                    controller: emailController,
+                    hintText: "email",
+                    obscureText: false,
+                  ),
 
-                const SizedBox(height: 17),
+                  const SizedBox(height: 17),
 
-                // password textfield
-                MyTextField(
-                    controller: passwordController,
-                    hintText: "senha",
-                    obscureText: true),
+                  // password textfield
+                  MyTextField(
+                      controller: passwordController,
+                      hintText: "senha",
+                      obscureText: true),
 
-                const SizedBox(height: 17),
+                  const SizedBox(height: 17),
 
-                // forgot password
-                const Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 25),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
+                  // forgot password
+                  const Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 25),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        Text(
+                          'Esqueceu sua senha?',
+                          style: TextStyle(color: Colors.blue),
+                        ),
+                      ],
+                    ),
+                  ),
+
+                  const SizedBox(height: 25),
+
+                  // sign in button
+                  MyButton(
+                    onTap: signIn,
+                    text: 'Entrar',
+                  ),
+
+                  const SizedBox(height: 25),
+
+                  // or continue with
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 25.0),
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: Divider(
+                            thickness: 0.5,
+                            color: Colors.grey[400],
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                          child: Text(
+                            'Ou entre com',
+                            style: TextStyle(color: Colors.grey[700]),
+                          ),
+                        ),
+                        Expanded(
+                          child: Divider(
+                            thickness: 0.5,
+                            color: Colors.grey[400],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+
+                  const SizedBox(height: 20),
+
+                  // google + apple
+                  const Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Text(
-                        'Esqueceu sua senha?',
-                        style: TextStyle(color: Colors.blue),
+                      SquareTile(
+                        imagePath: 'lib/images/google.png',
+                      ),
+                      SizedBox(width: 25),
+                      SquareTile(imagePath: 'lib/images/apple.png'),
+                    ],
+                  ),
+
+                  const SizedBox(
+                    height: 25,
+                  ),
+
+                  // não possui conta? Registre-se aqui
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const Text('Não possui conta?'),
+                      const SizedBox(
+                        width: 4,
+                      ),
+                      GestureDetector(
+                        onTap: () {
+                          Navigator.of(context).pushNamedAndRemoveUntil(
+                              '/register/', (_) => false);
+                        },
+                        child: const Text(
+                          'Registre-se aqui',
+                          style: TextStyle(color: Colors.blue),
+                        ),
                       ),
                     ],
                   ),
-                ),
-
-                const SizedBox(height: 25),
-
-                // sign in button
-                MyButton(
-                  onTap: signIn,
-                  text: 'Entrar',
-                ),
-
-                const SizedBox(height: 25),
-
-                // or continue with
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 25.0),
-                  child: Row(
-                    children: [
-                      Expanded(
-                        child: Divider(
-                          thickness: 0.5,
-                          color: Colors.grey[400],
-                        ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 10.0),
-                        child: Text(
-                          'Ou entre com',
-                          style: TextStyle(color: Colors.grey[700]),
-                        ),
-                      ),
-                      Expanded(
-                        child: Divider(
-                          thickness: 0.5,
-                          color: Colors.grey[400],
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-
-                const SizedBox(height: 20),
-
-                // google + apple
-                const Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    SquareTile(
-                      imagePath: 'lib/images/google.png',
-                    ),
-                    SizedBox(width: 25),
-                    SquareTile(imagePath: 'lib/images/apple.png'),
-                  ],
-                ),
-
-                const SizedBox(
-                  height: 25,
-                ),
-
-                // não possui conta? Registre-se aqui
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    const Text('Não possui conta?'),
-                    const SizedBox(
-                      width: 4,
-                    ),
-                    GestureDetector(
-                      onTap: () {
-                        Navigator.of(context).pushNamedAndRemoveUntil(
-                            '/register/', (_) => false);
-                      },
-                      child: const Text(
-                        'Registre-se aqui',
-                        style: TextStyle(color: Colors.blue),
-                      ),
-                    ),
-                  ],
-                ),
-              ],
+                ],
+              ),
             ),
           ),
         ),
       ),
-    ));
+    );
   }
 }
