@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:teste/components/dialogs/error_dialogs.dart';
+import 'package:teste/components/note_tile.dart';
 import 'package:teste/services/firestore.dart';
 
 class HomePage extends StatefulWidget {
@@ -45,11 +46,20 @@ class _HomePageState extends State<HomePage> {
               if (!mounted) return;
               Navigator.pop(context);
             },
-            child: const Text('adicionar'),
+            child: const Text('confirmar'),
           ),
         ],
       ),
     );
+  }
+
+  void deleteNote(String docID) async {
+    try {
+       await firestoreService.deleteNote(docID);
+    } catch (e) {
+      if (!mounted) return;
+      genericErrorDialog(context, e.toString());
+    }
   }
 
   final user = FirebaseAuth.instance.currentUser!;
@@ -89,8 +99,8 @@ class _HomePageState extends State<HomePage> {
                 ),
                 StreamBuilder(
                     stream: firestoreService.getNotesStream(),
-                    builder: (context, snapshot) {
-                      if (snapshot.hasData) {
+                    builder: (context, snapshot) {       
+                      if (snapshot.hasData && snapshot.data!.docs.isNotEmpty ) {
                         List notesList = snapshot.data!.docs;
                         return Expanded(
                           child: ListView.builder(
@@ -98,33 +108,14 @@ class _HomePageState extends State<HomePage> {
                             itemBuilder: ((context, index) {
                               DocumentSnapshot document = notesList[index];
                               String docID = document.id;
-
                               Map<String, dynamic> data =
                                   document.data() as Map<String, dynamic>;
                               String noteText = data['note'];
 
-                              return ListTile(
-                                title: Text(noteText),
-                                trailing: Row(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    IconButton(
-                                      onPressed: () => openNoteBox(docID),
-                                      icon: const Icon(Icons.edit),
-                                    ),
-                                    IconButton(
-                                      onPressed: () async { 
-                                        try {
-                                          await firestoreService.deleteNote(docID);
-                                        } catch (e) {
-                                          if (!mounted) return;
-                                          genericErrorDialog(context, e.toString());
-                                        }
-                                      },
-                                      icon: const Icon(Icons.delete),
-                                    ),
-                                  ],
-                                ),
+                              return NoteTile(
+                                text: noteText,
+                                onEditPressed: () => openNoteBox(docID),
+                                onDeletePressed: () => deleteNote(docID),
                               );
                             }),
                           ),
