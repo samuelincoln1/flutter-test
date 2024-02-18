@@ -92,7 +92,7 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       floatingActionButton: FloatingActionButton(
-        onPressed: () => addNote(),
+        onPressed: () => Navigator.of(context).pushNamed('/create-note/'),
         backgroundColor: const Color.fromARGB(255, 255, 93, 81),
         child: const Icon(Icons.add),
       ),
