@@ -27,6 +27,8 @@ class _HomePageState extends State<HomePage> {
       builder: (context) => AlertDialog(
         content: TextField(
           controller: textController,
+          keyboardType: TextInputType.multiline,
+          maxLines: null,
         ),
         actions: [
           ElevatedButton(
@@ -64,12 +66,11 @@ class _HomePageState extends State<HomePage> {
                 if (!mounted) return;
                 genericErrorDialog(context, e.toString());
               }
-
               textController.clear();
               if (!mounted) return;
               Navigator.pop(context);
             },
-            child: const Text('confirmar'),
+            child: const Text('editar'),
           ),
         ],
       ),

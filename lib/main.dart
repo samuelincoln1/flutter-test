@@ -1,6 +1,7 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:teste/firebase_options.dart';
+import 'package:teste/views/create_note.dart';
 import 'package:teste/views/login/auth_page.dart';
 import 'package:teste/views/home_page.dart';
 import 'package:teste/views/login/login_page.dart';
@@ -27,6 +28,7 @@ class MainApp extends StatelessWidget {
         '/register/': (context) => const RegisterPage(),
         '/login/': (context) => const LoginPage(),
         '/home/': (context) => const HomePage(),
+        '/create-note/': (context) => const CreateNote(),
       },
     );
   }
