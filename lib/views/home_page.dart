@@ -91,71 +91,71 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      floatingActionButton: FloatingActionButton(
-        onPressed: () => Navigator.of(context).pushNamed('/create-note/'),
-        backgroundColor: const Color.fromARGB(255, 255, 93, 81),
-        child: const Icon(Icons.add),
-      ),
-      body: Container(
-        decoration: const BoxDecoration(
-          image: DecorationImage(
-            image: AssetImage('lib/images/fundo.png'),
-            fit: BoxFit.cover,
-          ),
+        floatingActionButton: FloatingActionButton(
+          onPressed: () => Navigator.of(context).pushNamed('/create-note/'),
+          backgroundColor: const Color.fromARGB(255, 255, 93, 81),
+          child: const Icon(Icons.add),
         ),
-        child: SafeArea(
-          child: Center(
-            child: Column(
-              children: [
-                Row(
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.all(25.0),
-                      child: Text('Anotações',
-                          style: GoogleFonts.lobster(fontSize: 38)),
-                    ),
-                    const Spacer(),
-                    IconButton(
-                      onPressed: signOut,
-                      icon: const Icon(Icons.logout),
-                    ),
-                  ],
-                ),
-                StreamBuilder(
-                    stream: firestoreService.getNotesStream(),
-                    builder: (context, snapshot) {
-                      if (snapshot.hasData && snapshot.data!.docs.isNotEmpty) {
-                        List notesList = snapshot.data!.docs;
-                        return Expanded(
-                          child: ListView.builder(
-                            itemCount: notesList.length,
-                            itemBuilder: ((context, index) {
-                              DocumentSnapshot document = notesList[index];
-                              String docID = document.id;
-
-                              Map<String, dynamic> data =
-                                  document.data() as Map<String, dynamic>;
-
-                              String noteText = data['title'];
-
-                              return NoteTile(
-                                text: noteText,
-                                onEditPressed: () => updateNote(docID),
-                                onDeletePressed: () => deleteNote(docID),
-                              );
-                            }),
-                          ),
-                        );
-                      } else {
-                        return const Text(
-                            'Você ainda não possui nenhuma anotação');
-                      }
-                    }),
-              ],
+        body: Container(
+          decoration: const BoxDecoration(
+            image: DecorationImage(
+              image: AssetImage('lib/images/fundo.png'),
+              fit: BoxFit.cover,
             ),
           ),
-        ),
-      ),
-    );
+          child: SafeArea(
+            child: Center(
+              child: Column(
+                children: [
+                  Row(
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.all(25.0),
+                        child: Text('Anotações',
+                            style: GoogleFonts.lobster(fontSize: 38)),
+                      ),
+                      const Spacer(),
+                      IconButton(
+                        onPressed: signOut,
+                        icon: const Icon(Icons.logout),
+                      ),
+                    ],
+                  ),
+                  StreamBuilder(
+                      stream: firestoreService.getNotesStream(),
+                      builder: (context, snapshot) {
+                        if (snapshot.hasData &&
+                            snapshot.data!.docs.isNotEmpty) {
+                          List notesList = snapshot.data!.docs;
+                          return Expanded(
+                            child: ListView.builder(
+                              itemCount: notesList.length,
+                              itemBuilder: ((context, index) {
+                                DocumentSnapshot document = notesList[index];
+                                String docID = document.id;
+
+                                Map<String, dynamic> data =
+                                    document.data() as Map<String, dynamic>;
+
+                                String noteText = data['title'];
+
+                                return NoteTile(
+                                  text: noteText,
+                                  onEditPressed: () => updateNote(docID),
+                                  onDeletePressed: () => deleteNote(docID),
+                                );
+                              }),
+                            ),
+                          );
+                        } else {
+                          return const Text(
+                              'Você ainda não possui nenhuma anotação');
+                        }
+                      }),
+                ],
+              ),
+            ),
+          ),
+        ));
   }
 }
