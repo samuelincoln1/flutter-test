@@ -21,7 +21,7 @@ class _HomePageState extends State<HomePage> {
     await FirebaseAuth.instance.signOut();
   }
 
-  void openNoteBox(String? docID) {
+  void addNote() {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
@@ -32,11 +32,34 @@ class _HomePageState extends State<HomePage> {
           ElevatedButton(
             onPressed: () async {
               try {
-                if (docID == null) {
-                  await firestoreService.addNote(textController.text);
-                } else {
-                  await firestoreService.updateNote(docID, textController.text);
-                }
+                await firestoreService.addNote(textController.text);
+              } catch (e) {
+                if (!mounted) return;
+                genericErrorDialog(context, e.toString());
+              }
+              textController.clear();
+              if (!mounted) return;
+              Navigator.pop(context);
+            },
+            child: const Text('confirmar'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void updateNote(String docID) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        content: TextField(
+          controller: textController,
+        ),
+        actions: [
+          ElevatedButton(
+            onPressed: () async {
+              try {
+                  await firestoreService.updateNote(docID, textController.text);  
               } catch (e) {
                 if (!mounted) return;
                 genericErrorDialog(context, e.toString());
@@ -68,7 +91,7 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       floatingActionButton: FloatingActionButton(
-        onPressed: () => openNoteBox(null),
+        onPressed: () => addNote(),
         backgroundColor: const Color.fromARGB(255, 255, 93, 81),
         child: const Icon(Icons.add),
       ),
@@ -114,7 +137,7 @@ class _HomePageState extends State<HomePage> {
 
                               return NoteTile(
                                 text: noteText,
-                                onEditPressed: () => openNoteBox(docID),
+                                onEditPressed: () => updateNote(docID),
                                 onDeletePressed: () => deleteNote(docID),
                               );
                             }),
