@@ -1,4 +1,7 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:teste/components/dialogs/error_dialogs.dart';
+import 'package:teste/services/firestore.dart';
 
 class CreateNote extends StatefulWidget {
   const CreateNote({super.key});
@@ -10,8 +13,25 @@ class CreateNote extends StatefulWidget {
 class _CreateNoteState extends State<CreateNote> {
   final titleController = TextEditingController();
   final textController = TextEditingController();
-
+  final firestoreService = FirestoreService();
+  final user = FirebaseAuth.instance.currentUser!;
   
+  void addNote() async {
+    try {
+      if (textController.text.isNotEmpty && titleController.text.isNotEmpty) {
+        await firestoreService.addNote(titleController.text, textController.text, user.uid);
+        textController.clear();
+        titleController.clear();
+        if (!mounted) return; 
+        Navigator.pop(context);
+      } else {
+        genericErrorDialog(context, "Não deixe nenhum campo em branco");
+      }  
+    } catch (e) {
+      if (!mounted) return;
+      genericErrorDialog(context, e.toString());
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -41,7 +61,7 @@ class _CreateNoteState extends State<CreateNote> {
                       padding: const EdgeInsets.only(right:35, bottom: 0, top: 0),
                       child: TextButton(
                        
-                        onPressed: () {}, 
+                        onPressed: () => addNote(), 
                         child: const Text('Salvar', style: TextStyle(fontSize: 18, color: Color.fromARGB(255, 0, 0, 138)),),
                       ),
                     ),

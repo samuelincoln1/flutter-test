@@ -1,14 +1,17 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
+
 class FirestoreService {
   // get collection of notes
   final CollectionReference notes = FirebaseFirestore.instance.collection('notes');
 
   // CREATE
-  Future<void> addNote(String note)  {
+  Future<void> addNote(String title, String text, String userID)  {
     return notes.add({
-      'note': note,
+      'title': title,
+      'text': text,
       'timestamp': Timestamp.now(),
+      'user': userID,
     });
   }
 

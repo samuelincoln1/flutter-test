@@ -34,7 +34,7 @@ class _HomePageState extends State<HomePage> {
           ElevatedButton(
             onPressed: () async {
               try {
-                await firestoreService.addNote(textController.text);
+                // await firestoreService.addNote(textController.text);
               } catch (e) {
                 if (!mounted) return;
                 genericErrorDialog(context, e.toString());
@@ -61,7 +61,7 @@ class _HomePageState extends State<HomePage> {
           ElevatedButton(
             onPressed: () async {
               try {
-                  await firestoreService.updateNote(docID, textController.text);  
+                await firestoreService.updateNote(docID, textController.text);
               } catch (e) {
                 if (!mounted) return;
                 genericErrorDialog(context, e.toString());
@@ -79,7 +79,7 @@ class _HomePageState extends State<HomePage> {
 
   void deleteNote(String docID) async {
     try {
-       await firestoreService.deleteNote(docID);
+      await firestoreService.deleteNote(docID);
     } catch (e) {
       if (!mounted) return;
       genericErrorDialog(context, e.toString());
@@ -123,8 +123,8 @@ class _HomePageState extends State<HomePage> {
                 ),
                 StreamBuilder(
                     stream: firestoreService.getNotesStream(),
-                    builder: (context, snapshot) {       
-                      if (snapshot.hasData && snapshot.data!.docs.isNotEmpty ) {
+                    builder: (context, snapshot) {
+                      if (snapshot.hasData && snapshot.data!.docs.isNotEmpty) {
                         List notesList = snapshot.data!.docs;
                         return Expanded(
                           child: ListView.builder(
@@ -132,9 +132,11 @@ class _HomePageState extends State<HomePage> {
                             itemBuilder: ((context, index) {
                               DocumentSnapshot document = notesList[index];
                               String docID = document.id;
+
                               Map<String, dynamic> data =
                                   document.data() as Map<String, dynamic>;
-                              String noteText = data['note'];
+
+                              String noteText = data['title'];
 
                               return NoteTile(
                                 text: noteText,
