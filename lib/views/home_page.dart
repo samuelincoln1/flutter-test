@@ -124,8 +124,7 @@ class _HomePageState extends State<HomePage> {
                   StreamBuilder(
                       stream: firestoreService.getNotesStream(),
                       builder: (context, snapshot) {
-                        if (snapshot.hasData &&
-                            snapshot.data!.docs.isNotEmpty) {
+                     
                           List notesList = snapshot.data!.docs;
                           return Expanded(
                             child: ListView.builder(
@@ -138,19 +137,19 @@ class _HomePageState extends State<HomePage> {
                                     document.data() as Map<String, dynamic>;
 
                                 String noteText = data['title'];
+                                String noteUserID = data['user'];
 
-                                return NoteTile(
-                                  text: noteText,
-                                  onEditPressed: () => updateNote(docID),
-                                  onDeletePressed: () => deleteNote(docID),
-                                );
+                                if (noteUserID == user.uid) {
+                                  return NoteTile(
+                                    text: noteText,
+                                    onEditPressed: () => updateNote(docID),
+                                    onDeletePressed: () => deleteNote(docID),
+                                  );
+                                }
                               }),
                             ),
                           );
-                        } else {
-                          return const Text(
-                              'Você ainda não possui nenhuma anotação');
-                        }
+                      
                       }),
                 ],
               ),
